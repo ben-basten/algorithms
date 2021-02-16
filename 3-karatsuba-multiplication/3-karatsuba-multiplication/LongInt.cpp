@@ -15,6 +15,8 @@ LongInt LongInt::mult(LongInt factor) {
 			// TODO: implement grade school algorithm
 		}
 	}
+
+	return LongInt("");
 }
 
 void LongInt::addZeroes(int n) {
