@@ -54,13 +54,16 @@ LongInt* LongInt::mult(LongInt* factor) {
 }
 
 LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
-	if (num2->isUnassigned()) { // checks if this is the first iteration through karatsuba
+	int extraZeroes = 0;
+
+	// only runs on the first iteration
+	if (num2->isUnassigned()) { 
 		delete num2;
 		num2 = this;
 	}
 
-	long maxSize = max(num1->getSize(), num2->getSize());
-	if (maxSize <= BASE_SIZE) {
+	long n = max(num1->getSize(), num2->getSize());
+	if (n <= BASE_SIZE) {
 		int n1 = stoi(num1->getNum());
 		int n2 = stoi(num2->getNum());
 		int result = n1 * n2;
@@ -73,20 +76,53 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 		LongInt* P3 = karatsuba(a[0]->add(a[1]), b[0]->add(b[1]));
 
 		// P1*10^n + (P3 - P2 - P1)*10^(n/2) + P2
-		return P1->addZeroes(n)->add(P3->sub(P2)->sub(P1))->addZeroes(n/2)->add(P2);
+		LongInt* result = P1->addZeroes(n)->add(P3->sub(P2)->sub(P1))->addZeroes(n / 2)->add(P2);
+		result->subZeroes(extraZeroes);
+		return result;
 	}
 }
 
-LongInt* LongInt::addZeroes(int n) {
-	return new LongInt();
+// returns a new LongInt with extra zeroes
+LongInt* LongInt::addZeroes(int numZeroes) {
+	string newNum = num;
+	for (int i = 0; i < numZeroes; i++) {
+		newNum += '0';
+	}
+	return new LongInt(newNum);
 }
 
+// substracts the zeroes from the current object
 void LongInt::subZeroes(int n) {
-
+	num = num.substr(0, getSize() - 2);
 }
 
 LongInt* LongInt::add(LongInt* toAdd) {
-	return new LongInt();
+	int carry = 0;
+	string result = "";
+	// ensures that "this" is always the largest number
+	if (toAdd->getSize() > getSize()) {
+		return toAdd->add(this);
+	}
+
+	string num1 = getNum();
+	string num2 = toAdd->getNum();
+	reverse(num1.begin(), num1.end());
+	reverse(num2.begin(), num2.end());
+
+	for(long i = 0; i < getSize(); i++) {
+		int sum = 0;
+		if (i < num2.size()) {
+			sum = (num1[i] - '0') + (num2[i] - '0');
+		} else {
+			sum = (num[i] - '0') + carry;
+		}
+
+		carry = sum / 10;
+		result += to_string(sum % 10);
+	}
+
+	reverse(result.begin(), result.end());
+	return new LongInt(result);
 }
 
 LongInt* LongInt::sub(LongInt* toSub) {

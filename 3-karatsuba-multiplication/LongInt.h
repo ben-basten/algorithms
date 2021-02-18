@@ -6,10 +6,8 @@ private:
 	std::string num;
 	//FOR KARATSUBA
 	const int BASE_SIZE = 5;
-	int n = 0;
-	int zeroAdjust = 0;
 
-	LongInt* addZeroes(int n);
+	LongInt* addZeroes(int numZeroes);
 	void subZeroes(int n);
 	LongInt* add(LongInt* toAdd);
 	LongInt* sub(LongInt* toSub);
