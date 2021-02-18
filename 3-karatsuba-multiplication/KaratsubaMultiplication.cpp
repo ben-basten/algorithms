@@ -11,13 +11,15 @@ int main(int argc, char** argv) {
 	cin >> num2;
 	
 	LongIntOperations ops = LongIntOperations(num1, num2);
-	LongInt gradeSchool = ops.mult();
+	LongInt* gradeSchool = ops.mult();
 	cout << "grade school: ";
-	gradeSchool.print(); // TODO: remove this
-	LongInt karatsuba = ops.karatsuba();
+	gradeSchool->print(); // TODO: remove this
+	LongInt* karatsuba = ops.karatsuba();
 	cout << "karatsuba: ";
-	karatsuba.print();   // TODO: remove this
+	karatsuba->print();   // TODO: remove this
 
-	string result = gradeSchool.isEqual(karatsuba) ? "Grade school matches Karatsuba!" : "An error occurred computing the multiplication.";
+	string result = gradeSchool->isEqual(karatsuba) ? "Grade school matches Karatsuba!" : "An error occurred computing the multiplication.";
 	cout << result << endl;
+
+	delete karatsuba, gradeSchool;
 }
