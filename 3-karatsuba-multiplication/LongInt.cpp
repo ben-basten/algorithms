@@ -126,7 +126,40 @@ LongInt* LongInt::add(LongInt* toAdd) {
 }
 
 LongInt* LongInt::sub(LongInt* toSub) {
-	return new LongInt();
+	if (toSub->isEqual(this)) return new LongInt("0");
+	int carry = 0;
+	string result = "";
+
+	string num1 = getNum();
+	string num2 = toSub->getNum();
+	reverse(num1.begin(), num1.end());
+	reverse(num2.begin(), num2.end());
+
+	for (int i = 0; i < num1.size(); i++) {
+		int diff = 0;
+		if (i < num2.size()) {
+			diff = (num1[i] - '0') - (num2[i] - '0') - carry;
+		} else {
+			diff = (num1[i] - '0') - carry;
+		}
+
+		if (diff < 0) {
+			diff += 10;
+			carry = 1;
+		} else {
+			carry = 0;
+		}
+
+		result += to_string(diff);
+	}
+
+	int end = result.size() - 1;
+	while (result[end] == '0') {
+		end--;
+	}
+	result = result.substr(0, end + 1); // removing extraneous zeroes
+	reverse(result.begin(), result.end()); // flipping result back into the right order
+	return new LongInt(result);
 }
 
 LongInt** LongInt::getHalves() {

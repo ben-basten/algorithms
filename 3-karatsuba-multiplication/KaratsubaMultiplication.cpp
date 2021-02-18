@@ -10,10 +10,6 @@ int main(int argc, char** argv) {
 	cout << "Enter another integer." << endl;
 	cin >> num2;
 
-	/*LongInt* uno = new LongInt(num1);
-	LongInt* dos = new LongInt(num2);
-	uno->add(dos)->print();*/
-	
 	LongIntOperations ops = LongIntOperations(num1, num2);
 	LongInt* gradeSchool = ops.mult();
 	cout << "grade school: ";
