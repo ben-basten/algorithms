@@ -117,6 +117,7 @@ LongInt* LongInt::add(LongInt* toAdd) {
 		} else {
 			sum = (num1[i] - '0') + carry;
 		}
+		if (carry > 0) result += to_string(carry);
 
 		carry = sum / 10;
 		result += to_string(sum % 10);
