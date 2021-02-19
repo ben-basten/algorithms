@@ -68,6 +68,7 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 		return new LongInt(to_string(result));
 	} else {
 		num1->adjustLengthsToMatch(num2);
+		n = num1->getSize();
 		LongInt** a = num1->getHalves();
 		LongInt** b = num2->getHalves();
 		LongInt* P1 = karatsuba(a[0], b[0]);
@@ -99,7 +100,7 @@ void LongInt::addLeadingZeroes(long numZeroes) {
 
 // substracts the zeroes from the current object
 void LongInt::subZeroes() {
-	while (num[0] == '0') {
+	while (getSize() > 1 && num[0] == '0') {
 		num = num.substr(1);
 	}
 }
