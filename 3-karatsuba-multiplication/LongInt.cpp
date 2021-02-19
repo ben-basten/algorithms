@@ -76,8 +76,9 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 		LongInt* P3 = karatsuba(a[0]->add(a[1]), b[0]->add(b[1]));
 
 		// P1*10^n + (P3 - P2 - P1)*10^(n/2) + P2
-		LongInt* result = P1->addZeroes(n)->add(P3->sub(P2)->sub(P1))->addZeroes(n / 2)->add(P2);
-		result->subZeroes(extraZeroes);
+		LongInt* result = P1->addZeroes(n)->add(P3->sub(P2)->sub(P1)->addZeroes(n / 2))->add(P2);
+		delete a, b, P1, P2, P3;
+		//result->subZeroes(extraZeroes);
 		return result;
 	}
 }
@@ -114,7 +115,7 @@ LongInt* LongInt::add(LongInt* toAdd) {
 		if (i < num2.size()) {
 			sum = (num1[i] - '0') + (num2[i] - '0');
 		} else {
-			sum = (num[i] - '0') + carry;
+			sum = (num1[i] - '0') + carry;
 		}
 
 		carry = sum / 10;
@@ -154,17 +155,20 @@ LongInt* LongInt::sub(LongInt* toSub) {
 	}
 
 	int end = result.size() - 1;
-	while (result[end] == '0') {
+	while (result[end] == '0' && end >= 0) {
 		end--;
 	}
-	result = result.substr(0, end + 1); // removing extraneous zeroes
+	if (end > 0) result = result.substr(0, end + 1); // removing extraneous zeroes
+	else result = "0";
 	reverse(result.begin(), result.end()); // flipping result back into the right order
 	return new LongInt(result);
 }
 
 LongInt** LongInt::getHalves() {
 	long mid = getSize() / 2;
-	LongInt* halves[2] = { new LongInt(getNum().substr(0, mid)), new LongInt(getNum().substr(mid, mid)) };
+	LongInt** halves = new LongInt * [2];
+	halves[0] = new LongInt(getNum().substr(0, mid));
+	halves[1] = new LongInt(getNum().substr(mid, mid));
 	return halves;
 }
 
