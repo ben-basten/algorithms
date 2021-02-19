@@ -62,9 +62,9 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 
 	long n = max(num1->getSize(), num2->getSize());
 	if (n <= BASE_SIZE) {
-		int n1 = stoi(num1->getNum());
-		int n2 = stoi(num2->getNum());
-		int result = n1 * n2;
+		long long n1 = stoll(num1->getNum());
+		long long n2 = stoll(num2->getNum());
+		long long result = n1 * n2;
 		return new LongInt(to_string(result));
 	} else {
 		num1->adjustLengthsToMatch(num2);

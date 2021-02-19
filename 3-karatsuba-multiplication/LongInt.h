@@ -5,7 +5,7 @@ class LongInt {
 private:
 	std::string num;
 	//FOR KARATSUBA
-	const int BASE_SIZE = 2;
+	const int BASE_SIZE = 6;
 
 	LongInt* addTrailingZeroes(int numZeroes);
 	void addLeadingZeroes(long numZeroes);
