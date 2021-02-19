@@ -54,8 +54,6 @@ LongInt* LongInt::mult(LongInt* factor) {
 }
 
 LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
-	int extraZeroes = 0;
-
 	// only runs on the first iteration
 	if (num2->isUnassigned()) { 
 		delete num2;
@@ -69,6 +67,7 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 		int result = n1 * n2;
 		return new LongInt(to_string(result));
 	} else {
+		num1->adjustLengthsToMatch(num2);
 		LongInt** a = num1->getHalves();
 		LongInt** b = num2->getHalves();
 		LongInt* P1 = karatsuba(a[0], b[0]);
@@ -76,15 +75,15 @@ LongInt* LongInt::karatsuba(LongInt* num1, LongInt* num2) {
 		LongInt* P3 = karatsuba(a[0]->add(a[1]), b[0]->add(b[1]));
 
 		// P1*10^n + (P3 - P2 - P1)*10^(n/2) + P2
-		LongInt* result = P1->addZeroes(n)->add(P3->sub(P2)->sub(P1)->addZeroes(n / 2))->add(P2);
+		LongInt* result = P1->addTrailingZeroes(n)->add(P3->sub(P2)->sub(P1)->addTrailingZeroes(n / 2))->add(P2);
+		result->subZeroes();
 		delete a, b, P1, P2, P3;
-		//result->subZeroes(extraZeroes);
 		return result;
 	}
 }
 
 // returns a new LongInt with extra zeroes
-LongInt* LongInt::addZeroes(int numZeroes) {
+LongInt* LongInt::addTrailingZeroes(int numZeroes) {
 	string newNum = num;
 	for (int i = 0; i < numZeroes; i++) {
 		newNum += '0';
@@ -92,9 +91,17 @@ LongInt* LongInt::addZeroes(int numZeroes) {
 	return new LongInt(newNum);
 }
 
+void LongInt::addLeadingZeroes(long numZeroes) {
+	for (int i = 0; i < numZeroes; i++) {
+		num = '0' + num;
+	}
+}
+
 // substracts the zeroes from the current object
-void LongInt::subZeroes(int n) {
-	num = num.substr(0, getSize() - 2);
+void LongInt::subZeroes() {
+	while (num[0] == '0') {
+		num = num.substr(1);
+	}
 }
 
 LongInt* LongInt::add(LongInt* toAdd) {
@@ -117,11 +124,11 @@ LongInt* LongInt::add(LongInt* toAdd) {
 		} else {
 			sum = (num1[i] - '0') + carry;
 		}
-		if (carry > 0) result += to_string(carry);
 
 		carry = sum / 10;
 		result += to_string(sum % 10);
 	}
+	if (carry > 0) result += to_string(carry);
 
 	reverse(result.begin(), result.end());
 	return new LongInt(result);
@@ -156,7 +163,7 @@ LongInt* LongInt::sub(LongInt* toSub) {
 	}
 
 	int end = result.size() - 1;
-	while (result[end] == '0' && end >= 0) {
+	while (result[end] == '0' && end > 0) {
 		end--;
 	}
 	if (end > 0) result = result.substr(0, end + 1); // removing extraneous zeroes
@@ -171,6 +178,19 @@ LongInt** LongInt::getHalves() {
 	halves[0] = new LongInt(getNum().substr(0, mid));
 	halves[1] = new LongInt(getNum().substr(mid, mid));
 	return halves;
+}
+
+void LongInt::adjustLengthsToMatch(LongInt* num2) {
+	if (getSize() > num2->getSize()) {
+		num2->addLeadingZeroes(getSize() - num2->getSize());
+	} else if(num2->getSize() > getSize()) {
+		addLeadingZeroes(num2->getSize() - getSize());
+	}
+
+	if (getSize() % 2 == 1) {
+		addLeadingZeroes(1);
+		num2->addLeadingZeroes(1);
+	}
 }
 
 bool LongInt::isEqual(LongInt* toCompare) {
