@@ -120,7 +120,7 @@ LongInt* LongInt::add(LongInt* toAdd) {
 	for(long i = 0; i < getSize(); i++) {
 		int sum = 0;
 		if (i < num2.size()) {
-			sum = (num1[i] - '0') + (num2[i] - '0');
+			sum = (num1[i] - '0') + (num2[i] - '0') + carry;
 		} else {
 			sum = (num1[i] - '0') + carry;
 		}
